@@ -1,6 +1,6 @@
 {
   "engines": {
-    "node": ">=16.0.0"
+    "node": "16.18.1"
   },
   "name": "fastify-prisma-deploy-eb-test",
   "version": "1.0.0",
