@@ -1,12 +1,12 @@
 // ESM
-import Fastify from 'fastify'
-const fastify = Fastify({
-    logger: true
-})
-// CommonJs
-// const fastify = require('fastify')({
+// import Fastify from 'fastify'
+// const fastify = Fastify({
 //     logger: true
 // })
+// CommonJs
+const fastify = require('fastify')({
+    logger: true
+})
 
 fastify.get('/', async (request, reply) => {
     return { hello: 'world' }
