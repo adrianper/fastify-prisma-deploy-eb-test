@@ -1,36 +1,18 @@
 // ESM
 import Fastify from 'fastify'
-import { PrismaClient } from '@prisma/client'
 
-const fastify = Fastify({
-    logger: true
-})
-// CommonJs
-// const fastify = require('fastify')({
-//     logger: true
-// })
+import { userRoutes } from './routes/users/users.routes.js'
 
-const prisma = new PrismaClient()
+const fastify = Fastify({ logger: true })
+
+/**
+ * Generate routes
+ */
+userRoutes.forEach(route => { fastify.route(route) })
 
 fastify.get('/', async (request, reply) => {
-    return { hello: 'world' }
+    return { hello: 'world!' }
 })
-
-fastify.get('/users', async (request, reply) => {
-    const users = await prisma.user.findMany()
-    return users
-})
-
-// fastify.get('/create_user', async (request, reply) => {
-//     const newUser = await prisma.user.create({
-//         data: {
-//             email: 'ana@mail.com',
-//             name: 'ana',
-//         }
-//     })
-
-//     return newUser
-// })
 
 /**
  * Run the server!
@@ -46,9 +28,3 @@ const start = async () => {
 }
 
 start()
-    .then(async () => {
-        await prisma.$disconnect()
-    })
-    .catch(async () => {
-        await prisma.$disconnect()
-    })
