@@ -142,10 +142,6 @@ const config = {
       },
       {
         "fromEnvVar": null,
-        "value": "rhel-openssl-1.0.x"
-      },
-      {
-        "fromEnvVar": null,
         "value": "linux-musl"
       }
     ],
@@ -184,9 +180,6 @@ Object.assign(exports, Prisma)
 
 path.join(__dirname, "query_engine-windows.dll.node");
 path.join(process.cwd(), "prisma\\generated\\clientMongo\\query_engine-windows.dll.node")
-
-path.join(__dirname, "libquery_engine-rhel-openssl-1.0.x.so.node");
-path.join(process.cwd(), "prisma\\generated\\clientMongo\\libquery_engine-rhel-openssl-1.0.x.so.node")
 
 path.join(__dirname, "libquery_engine-linux-musl.so.node");
 path.join(process.cwd(), "prisma\\generated\\clientMongo\\libquery_engine-linux-musl.so.node")
