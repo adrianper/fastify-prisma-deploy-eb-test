@@ -1,5 +1,6 @@
 // ESM
 import Fastify from 'fastify'
+import { prismaMongoDB } from './prismaClient.js'
 
 import { userRoutes } from './routes/users/users.routes.js'
 
@@ -14,12 +15,16 @@ fastify.get('/', async (request, reply) => {
     return { hello: 'world!' }
 })
 
+fastify.get('/mongodb', async (request, reply) => {
+    const userComments = await prismaMongoDB.userComment.findMany()
+    return userComments
+})
+
 /**
  * Run the server!
  */
 const start = async () => {
     try {
-        // await prisma.$connect().then(() => { console.log('DB Connected') })
         await fastify.listen({ port: process.env.PORT || 8080 })
     } catch (err) {
         fastify.log.error(err)
@@ -28,3 +33,9 @@ const start = async () => {
 }
 
 start()
+    // .finally(() => {
+    //     prismaMongoDB.$disconnect()
+    // })
+    // .catch(() => {
+    //     prismaMongoDB.$disconnect()
+    // })

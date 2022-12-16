@@ -1,0 +1,18 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+    provider = "prisma-client-js"
+    output   = "./generated/clientMongo"
+}
+
+datasource db {
+    provider = "mongodb"
+    url      = env("MONGO_DB_URL")
+}
+
+model UserComment {
+    id      String @id @default(auto()) @map("_id") @db.ObjectId
+    userId  Int
+    comment String
+}
