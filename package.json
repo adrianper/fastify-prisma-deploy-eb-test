@@ -9,7 +9,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "nodemon app.js"
+    "dev": "nodemon src/app.js"
   },
   "repository": {
     "type": "git",
@@ -23,9 +23,11 @@
   },
   "homepage": "https://github.com/adrianper/fastify-prisma-deploy-eb-test#readme",
   "dependencies": {
+    "@prisma/client": "^4.7.1",
     "fastify": "^4.10.2"
   },
   "devDependencies": {
-    "nodemon": "^2.0.20"
+    "nodemon": "^2.0.20",
+    "prisma": "^4.7.1"
   }
 }
