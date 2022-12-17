@@ -12,7 +12,7 @@ const fastify = Fastify({ logger: true })
 userRoutes.forEach(route => { fastify.route(route) })
 
 fastify.get('/', async (request, reply) => {
-    return { hello: 'world!' }
+    return { hello: 'WORLD!' }
 })
 
 fastify.get('/mongodb', async (request, reply) => {
