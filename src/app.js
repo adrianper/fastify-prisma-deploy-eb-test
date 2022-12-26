@@ -1,10 +1,13 @@
 // ESM
 import Fastify from 'fastify'
+import websocket from '@fastify/websocket'
 import { prismaMongoDB } from './prismaClient.js'
 
 import { userRoutes } from './routes/users/users.routes.js'
 
 const fastify = Fastify({ logger: true })
+
+await fastify.register(websocket)
 
 /**
  * Generate routes
@@ -18,6 +21,12 @@ fastify.get('/', async (request, reply) => {
 fastify.get('/mongodb', async (request, reply) => {
     const userComments = await prismaMongoDB.userComment.findMany()
     return userComments
+})
+
+fastify.get('/websocket', { websocket: true }, (connection /* SocketStream */, req /* FastifyRequest */) => {
+    connection.socket.on('message', message => {
+        connection.socket.send(`Hello from Fastify Websocket, your message: ${message}`)
+    })
 })
 
 /**
