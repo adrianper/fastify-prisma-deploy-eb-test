@@ -15,7 +15,8 @@ await fastify.register(websocket)
 userRoutes.forEach(route => { fastify.route(route) })
 
 fastify.get('/', async (request, reply) => {
-    return { hello: 'WORLD!' }
+    const { env } = request.query
+    return { hello: `World ${env}!` }
 })
 
 fastify.get('/mongodb', async (request, reply) => {
