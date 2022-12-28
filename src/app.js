@@ -1,13 +1,23 @@
 // ESM
 import Fastify from 'fastify'
-import websocket from '@fastify/websocket'
 import { prismaMongoDB } from './prismaClient.js'
+import socketioServer from 'fastify-socket.io'
+import fastifyCors from '@fastify/cors'
 
 import { userRoutes } from './routes/users/users.routes.js'
 
 const fastify = Fastify({ logger: true })
 
-await fastify.register(websocket)
+await fastify.register(fastifyCors, {
+    cors: {
+        origin: [
+            'http://localhost:5000',
+            'https://adrianper.github.io'
+        ]
+    }
+})
+
+await fastify.register(socketioServer)
 
 /**
  * Generate routes
@@ -24,10 +34,17 @@ fastify.get('/mongodb', async (request, reply) => {
     return userComments
 })
 
-fastify.get('/websocket', { websocket: true }, (connection /* SocketStream */, req /* FastifyRequest */) => {
-    connection.socket.on('message', message => {
-        connection.socket.send(`Hello from Fastify Websocket, your message: ${message}`)
+fastify.io.on('connection', socket => {
+    console.log('User connected: ', socket.id)
+
+    fastify.io.on('message', message => {
+        fastify.io.send(`Hello from Fastify Websocket, your message: ${message}`)
     })
+})
+
+fastify.get('/socketio', (req, reply) => {
+    fastify.io.emit('testing', `Socket io is working! :)`)
+    return null
 })
 
 /**

@@ -23,9 +23,11 @@
   },
   "homepage": "https://github.com/adrianper/fastify-prisma-deploy-eb-test#readme",
   "dependencies": {
-    "@fastify/websocket": "^7.1.1",
+    "@fastify/cors": "^8.2.0",
     "@prisma/client": "^4.7.1",
-    "fastify": "^4.10.2"
+    "fastify": "^4.10.2",
+    "fastify-socket.io": "^4.0.0",
+    "socket.io": "^4.5.4"
   },
   "devDependencies": {
     "nodemon": "^2.0.20",
