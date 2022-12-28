@@ -8,7 +8,9 @@ import { userRoutes } from './routes/users/users.routes.js'
 
 const fastify = Fastify({ logger: true })
 
-await fastify.register(fastifyCors, {
+await fastify.register(fastifyCors)
+
+await fastify.register(socketioServer, {
     cors: {
         origin: [
             'http://localhost:5000',
@@ -16,8 +18,6 @@ await fastify.register(fastifyCors, {
         ]
     }
 })
-
-await fastify.register(socketioServer)
 
 /**
  * Generate routes
@@ -37,9 +37,12 @@ fastify.get('/mongodb', async (request, reply) => {
 fastify.io.on('connection', socket => {
     console.log('User connected: ', socket.id)
 
-    fastify.io.on('message', message => {
-        fastify.io.send(`Hello from Fastify Websocket, your message: ${message}`)
+    socket.on('message', message => {
+        if(!message.user || message.user === '') message.user = socket.id.slice(-6)
+        
+        socket.broadcast.emit('message', message)
     })
+    
 })
 
 fastify.get('/socketio', (req, reply) => {
