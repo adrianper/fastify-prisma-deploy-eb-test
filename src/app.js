@@ -76,9 +76,14 @@ fastify.io.on('connection', socket => {
     console.log('User connected: ', socket.id)
 
     socket.on('message', message => {
-        if (!message.user || message.user === '') message.user = socket.id.slice(-6)
-
-        socket.broadcast.emit('message', message)
+        try {
+            if (!message.user || message.user === '') message.user = socket.id.slice(-6)
+    
+            socket.broadcast.emit('message', message)
+            
+        } catch (error) {
+            fastify.log.error('error on message')
+        }
     })
 
 })
