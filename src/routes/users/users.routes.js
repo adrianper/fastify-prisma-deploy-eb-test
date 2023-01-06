@@ -14,10 +14,10 @@ export const userRoutes = [
     {
         url: '/users/:id',
         method: 'GET',
-        handler: (request, reply) => {
+        handler: async (request, reply) => {
             const { id } = request.params
 
-            const user = prisma.user.findUnique({
+            const user = await prisma.user.findUnique({
                 where: { id },
             })
 
