@@ -1,48 +1,49 @@
 import { fastify } from "../../app.js"
 import { prisma } from "../../prismaClient.js"
 
+const exclude = (object = {}, keys = []) => {
+    keys.forEach(key => {
+        delete object[key]
+    })
+
+    return object
+}
+
 export const authRoutes = [
     {
-        url: '/test_get',
-        method: 'GET',
-        handler: async (request, reply) => {
-            try {
-                const user = await prisma.user.findUnique({
-                    where: {id: 1}
-                })
-
-                const token = fastify.jwt.sign({ userId: user.id }, { expiresIn: '1m' })
-
-                await reply.cookie('x-access-token', token, {
-                    path: '/',
-                    httpOnly: true,
-                    sameSite: true
-                }).send({ token })
-                
-            } catch (error) {
-                return { error }
-            }
-        },
-    },
-    {
-        url: '/test',
+        url: '/auth/signup',
         method: 'POST',
         handler: async (request, reply) => {
+            const { name, email, password } = request.body
+
             try {
-                console.log(request.cookies)
-                // request.jwtVerify()
-                return { helloFrom: request.routerPath }
+                const user = await prisma.user.findUnique({
+                    where: { email }
+                })
+
+                if (user) return { error: 'User already exists' }
+
+                const newUser = await prisma.user.create({
+                    data: {
+                        name,
+                        email,
+                        password: await fastify.bcrypt.hash(password),
+                    },
+                })
+
+                const token = fastify.jwt.sign({ userId: newUser.id }, { expiresIn: '1m' })
+
+                return { token, user: exclude(newUser, ['password']) }
             } catch (error) {
-                return { error }
+                return { error: error.message }
             }
-        },
+        }
     },
     {
         url: '/auth/login',
         method: 'POST',
         handler: async (request, reply) => {
             const { email, password } = request.body
-            // const { email, password } = {email: 'john@mail.com', password: 'password'}
 
             try {
                 const user = await prisma.user.findUnique({
@@ -57,14 +58,10 @@ export const authRoutes = [
 
                 const token = fastify.jwt.sign({ userId: user.id }, { expiresIn: '1m' })
 
-                await reply.cookie('x-access-token', token, {
-                    path: '/',
-                    httpOnly: true,
-                    sameSite: 'None'
-                }).send({ token })
+                return { token, user: exclude(user, ['password']) }
 
             } catch (error) {
-                return { message: `Server error: ${error.message}` }
+                return { error: error.message }
             }
         }
     },
@@ -72,35 +69,11 @@ export const authRoutes = [
         url: '/auth/logout',
         method: 'POST',
         handler: async (request, reply) => {
+
+            // const user = await prisma.user.findUnique()
             console.log(fastify)
             console.log(reply)
-            // await fastify.cookie.clearCookie('x-access-vtoken').status(200).send({ success: 'loged out' })
             return { hello: 'logout' }
-        }
-    },
-    {
-        url: '/auth/signup',
-        method: 'POST',
-        handler: async (request, reply) => {
-            const { name, email, password } = request.body
-
-            try {
-                const user = await prisma.user.findUnique({
-                    where: { email }
-                })
-
-                if (user) return { error: 'User already exists' }
-
-                // const token = fastify.jwt.sign()
-
-                const newUser = await prisma.user.create({
-                    data: { email, name, password: fastify.bcrypt.hash(password) },
-                })
-
-                return { hello: 'signup', user: newUser.include({ email: true, name: true }) }
-            } catch (error) {
-                return { message: 'Server error' }
-            }
         }
     },
 ]

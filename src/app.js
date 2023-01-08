@@ -1,6 +1,5 @@
 // ESM
 import Fastify from 'fastify'
-import { prismaMongoDB } from './prismaClient.js'
 import fastifyCors from '@fastify/cors'
 import fastifyCookie from '@fastify/cookie'
 import socketioServer from 'fastify-socket.io'
@@ -17,7 +16,8 @@ await fastify.register(fastifyCors, {
         'http://localhost:5000',
         'https://adrianper.github.io'
     ],
-    credentials: true
+    credentials: true,
+    exposedHeaders: ['Set-Cookie']
 })
 
 await fastify.register(fastifyCookie, {
@@ -46,51 +46,35 @@ await fastify.register(socketioServer, {
 const authenticateRoutes = ['/auth/logout', '/users_posts']
 
 fastify.addHook("onRequest", async (request, reply) => {
-    console.log('ROUTE PATH---', request.routerPath)
     try {
         if (!authenticateRoutes.includes(request.routerPath)) return
-        const token = await request.jwtVerify()
-        reply.headers({ 'Access-Control-Allow-Origin': 'http://localhost:5000' })
+        await request.jwtVerify()
     } catch (error) {
-        console.error('--------------\n', error)
-        reply.code(error.statusCode).send({ message: error.message, code: error.code })
+        reply.code(error.statusCode).send({ error: error.message, code: error.code })
     }
 })
 
 /**
  * Generate routes
  */
-routes.forEach(route => { fastify.route(route) })
-
-
 fastify.get('/', async (request, reply) => {
     return { hello: `World ${process.env.ENVIRONMENT}!` }
 })
 
-fastify.get('/mongodb', async (request, reply) => {
-    const userComments = await prismaMongoDB.userComment.findMany()
-    return userComments
-})
+routes.forEach(route => { fastify.route(route) })
 
 fastify.io.on('connection', socket => {
-    console.log('User connected: ', socket.id)
-
     socket.on('message', message => {
         try {
             if (!message.user || message.user === '') message.user = socket.id.slice(-6)
-    
+
             socket.broadcast.emit('message', message)
-            
+
         } catch (error) {
-            fastify.log.error('error on message')
+            fastify.log.error('error on message', error)
         }
     })
 
-})
-
-fastify.get('/socketio', (req, reply) => {
-    fastify.io.emit('testing', `Socket io is working! :)`)
-    return null
 })
 
 /**
