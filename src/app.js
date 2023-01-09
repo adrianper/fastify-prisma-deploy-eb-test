@@ -27,10 +27,10 @@ await fastify.register(fastifyCookie, {
 })
 await fastify.register(fastifyJwt, {
     secret: process.env.JWT_SECRET,
-    cookie: {
-        cookieName: 'x-access-token',
-        signed: false
-    }
+    // cookie: {
+    //     cookieName: 'x-access-token', //change default jwtVerify (Headers 'Authorization' Bearer [token]) 
+    //     signed: false
+    // }
 })
 await fastify.register(fastifyBcrypt, { saltWorkFactor: 12 })
 await fastify.register(socketioServer, {
