@@ -35,15 +35,7 @@ await fastify.register(fastifyJwt, {
 await fastify.register(fastifyBcrypt, { saltWorkFactor: 12 })
 await fastify.register(socketioServer, {
     cors: {
-        origin: [
-            'http://127.0.0.1:5000',
-            'http://localhost:5000',
-            'https://adrianper.github.io',
-            'https://front-end-api-tqcg.vercel.app',
-            'https://front-end-api-tqcg-50tpqa0to-adrianper.vercel.app',
-            'https://front-end-api-tqcg-adrianper.vercel.app',
-            'https://front-end-api-tqcg-git-main-adrianper.vercel.app'
-        ]
+        origin: '*'
     }
 })
 
