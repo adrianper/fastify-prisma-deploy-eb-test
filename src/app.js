@@ -38,7 +38,7 @@ await fastify.register(socketioServer, {
         origin: [
             'http://127.0.0.1:5000',
             'http://localhost:5000',
-            'https://front-end-api-tqcg.vercel.app',
+            'https://adrianper.github.io',
         ]
     }
 })
