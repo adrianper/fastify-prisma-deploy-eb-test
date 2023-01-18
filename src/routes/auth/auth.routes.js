@@ -21,7 +21,8 @@ export const authRoutes = [
                     where: { email }
                 })
 
-                if (user) return { error: 'User already exists' }
+                if (user) reply.status(400).send({ error: 'User already exists', code: 'BAD_SUPPLIED_USER' })
+                // return { error: 'User already exists' }
 
                 const newUser = await prisma.user.create({
                     data: {
@@ -35,7 +36,8 @@ export const authRoutes = [
 
                 return { token, user: exclude(newUser, ['password']) }
             } catch (error) {
-                return { error: error.message }
+                reply.status(500).send({ error: error.message, code: error.code })
+                // return { error: error.message }
             }
         }
     },
@@ -54,14 +56,16 @@ export const authRoutes = [
 
                 const matchPassword = await fastify.bcrypt.compare(password, user.password)
 
-                if (!matchPassword) return { error: 'Password incorrect!' }
+                if (!matchPassword) reply.status(400).send({ error: 'Password incorrect', code: 'BAD_SUPPLIED_PASSWORD' })
+                // return { error: 'Password incorrect!' }
 
                 const token = fastify.jwt.sign({ userId: user.id }, { expiresIn: '1m' })
 
                 return { token, user: exclude(user, ['password']) }
 
             } catch (error) {
-                return { error: error.message }
+                reply.status(500).send({ error: error.message, code: error.code })
+                // return { error: error.message }
             }
         }
     },
