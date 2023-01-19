@@ -14,6 +14,7 @@ await fastify.register(fastifyCors, {
     origin: [
         'http://127.0.0.1:5000',
         'http://localhost:5000',
+        'https://inteligenemt.github.io',
         'https://adrianper.github.io',
         'https://front-end-api.vercel.app',
         'https://front-end-api-git-main-adrianper.vercel.app',
